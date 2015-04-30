@@ -2,3 +2,5 @@ node_modules
 bower_components
 .DS_Store
 *.log
+public/js/bower.*
+public/css/bower.*

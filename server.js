@@ -18,13 +18,11 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'dist')));
+app.use(express.static(path.join(__dirname, 'public')));
 
-/*
-router.get('/', function(req, res, next) {
-  res.render('index', {title: 'Express'});
+app.get('/', function(req, res, next) {
+  res.render('index', {title: 'spyglass'});
 });
-*/
 
 // catch 404 and forward to error handlers
 app.use(function(req, res, next) {
