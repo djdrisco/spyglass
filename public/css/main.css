@@ -1,21 +1,174 @@
 body {
-    background-color: #F3F4E2;
+    background-color: #ffffff;
 }
 
 .title {
-    margin: 0px 0px 20px 20px;
+    margin-left: 20px;
     font-size: 24px;
-    font-weight: bold;
+    font-weight: normal;
 }
 
 #nav {
     border-radius: 5px;
     margin: 10px 5px;
     padding: 5px;
-    background-color: #A2ECEF;
+    background-color: #444;
+    color: #fff;
 }
+
+#nav hr {
+  border-color: #999;
+}
+
+#nav a {
+  color: #ddd;
+}
+
+.report_list li a {
+  cursor: pointer;
+}
+
 
 #results {
     margin: 10px 5px;
     padding: 5px;
 }
+
+/*
+-------------------------------------------------------------------------------------------------------
+RESULTS TABLE
+-------------------------------------------------------------------------------------------------------
+*/
+
+table.results {
+  margin-bottom:5px;
+}
+
+table.results th {
+  padding: 3px 6px 2px 6px;
+  white-space:nowrap;
+  background: #aaaaaa url('../util/gradient.php?color1=aaaaaa&color2=888888&height=15') repeat-x;
+  border-right:1px solid #777777;
+  border-bottom:1px solid #777777;
+  color:#ffffff;
+  font-weight:normal;
+  font-size: 12px;
+}
+
+table.results th a {
+  color:#ffffff;
+  text-decoration:none;
+}
+
+table.results td {
+  padding: 2px 6px 1px 6px;
+  font-size: 12px;
+  border-right:1px solid #cccccc;
+  border-bottom:1px solid #cccccc;
+}
+
+table.results > tbody > tr > td {
+  background: #ffffff url('../util/gradient.php?color1=ffffff&color2=f0f0f0&height=20') repeat-x;
+}
+table.results > tbody > tr:hover > td {
+  background:#ffeecc;
+}
+
+/*
+table.results td.clr1 {
+  background: #ffffff url('../util/gradient.php?color1=ffffff&color2=f0f0f0&height=20') repeat-x;
+}
+*/
+
+/* deprecated */
+table.results > tbody > tr > td.clr2 {
+  background: #ddddee;
+}
+table.results > tbody > tr > td.alt {
+  background: #ddddee;
+}
+table.results > tbody > tr > td.alt2 {
+  background: #cccccc;
+}
+
+table.results > tbody > tr > td.reviewed {
+  color:#666666;
+  background: #cccccc;
+  font-style:italic;
+}
+table.results > tbody > tr:hover > td.reviewed {
+  background: #ccccee;
+}
+
+table.results > tbody > tr > td.filtered {
+  background: #ccccdd;
+  font-style:italic;
+}
+table.results > tbody > tr:hover > td.filtered {
+  background: #ccccdd;
+}
+
+
+table.results > tbody > tr > td.longlink {
+  padding:0px 2px;
+  border:none;
+  font-family:monaco,andale mono,monospace;
+  font-size:11px;
+  border-bottom:1px solid #cccccc;
+}
+table.results > tbody > tr > td.long {
+  padding:3px 6px;
+  background: #dddddd url('../util/gradient.php?color1=999999&color2=dddddd&height=5') bottom left repeat-x;
+  font-family:monaco,andale mono,monospace;
+  font-size:11px;
+  color:#444444;
+}
+
+table.results > tbody > tr > td.longlink > span.display_link {
+  font:normal 9px tahoma;
+  color:#001144;
+  cursor:pointer;
+}
+
+table.results > tbody > tr > td.reviewed a:link {
+  color:#666666;
+  font-style:italic;
+}
+
+/* Style-less cells containing action links at end of row */
+table.results > thead > tr > th.bare {
+  border:none;
+  background:none;
+  font:12px arial;
+  color:#555555;
+}
+table.results > tbody > tr > td.bare {
+  border:none;
+  background:none;
+  font:12px arial;
+  color:#555555;
+}
+
+table.result_options td {
+  padding: 2px 6px 1px 6px;
+  font-size: 12px;
+  background: #ffffff url('../util/gradient.php?color1=ffffff&color2=f0f0f0&height=20') repeat-x;
+  border:1px solid #cccccc;
+  margin-right:5px;
+}
+
+span.hlight:hover {
+  text-decoration:underline;
+  color:maroon;
+}
+
+span.option_link {
+  font:12px arial;
+  color:#777777;
+  cursor:pointer;
+}
+span.option_link:hover {
+  color:#cc0000;
+}
+
+

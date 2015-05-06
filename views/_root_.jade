@@ -2,7 +2,11 @@ doctype html
 html
   head
     title= title
-    link(rel='stylesheet', href='/css/bower.css')
-    link(rel='stylesheet', href='/css/main.css')
+    link(rel='stylesheet', href='#{settings.baseUrl}/css/bower.css')
+    link(rel='stylesheet', href='#{settings.baseUrl}/css/main.css')
+    script.
+      var baseUrl = !{JSON.stringify(settings.baseUrl)};    
   body
     block content
+    script(src='#{settings.baseUrl}/js/bower.js')
+    script(src='#{settings.baseUrl}/js/index.js')
