@@ -6,7 +6,17 @@ var https_proxy = require("https-proxy-agent");
 var router = express.Router();
 
 var apiVersion = '2014-02-01';
-var regions = ['us-east-1', 'us-west-1'];
+var regions = [
+  'us-east-1',
+  'us-west-1',
+  'us-west-2',
+  'eu-west-1',
+  'eu-central-1',
+  'ap-southeast-1',
+  'ap-southeast-2',
+  'ap-northeast-1',
+  'sa-east-1'
+];
 
 if (process.env.HTTP_PROXY) {
   AWS.config.update({
