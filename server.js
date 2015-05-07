@@ -7,7 +7,7 @@ var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 
 // Load application settings
-var settings = JSON.parse(fs.readFileSync(__dirname + "/settings.json"));
+var settings = require("./settings.js");
 
 var app = express();
 var router = express.Router();

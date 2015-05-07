@@ -24,7 +24,12 @@ body {
   color: #ddd;
 }
 
-.report_list li a {
+ul.report_list {
+  list-style-type: square;
+}
+
+
+ul.report_list li a {
   cursor: pointer;
 }
 
@@ -68,10 +73,12 @@ table.results th a {
 }
 
 table.results td {
+  vertical-align: top;
   padding: 2px 6px 1px 6px;
   font-size: 12px;
   border-right:1px solid #cccccc;
   border-bottom:1px solid #cccccc;
+  white-space: normal;
 }
 
 table.results > tbody > tr > td {
