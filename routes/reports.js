@@ -15,6 +15,13 @@ if (process.env.HTTP_PROXY) {
 
 //////////////////////////////////////////////////////////////////////////////////////////
 
+router.get('/vpcs', function(req, res) {
+  collect_regions("describeVpcs", {}, function(err, data) {
+    if (err) return console.error(err);
+    res.send(data);
+  });
+});
+
 router.get('/external_ips', function(req, res) {
   collect_regions("describeAddresses", {}, function(err, data) {
     if (err) return console.error(err);
