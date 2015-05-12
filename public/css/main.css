@@ -1,5 +1,5 @@
 body {
-    background-color: #ffffff;
+    background: #ffffff url('../img/greyzz.png') repeat;
 }
 
 .title {
@@ -80,6 +80,7 @@ table.results.keyval > tbody > tr > th {
   border-color: #A1A1A1;
   color: #5E5D5D;
   padding: 1px 6px 0px 6px;
+  text-align: right;
   font-size: 11px;
   cursor: default;
   -moz-user-select: none;
@@ -105,6 +106,16 @@ table.results > tbody > tr > td {
   font-size: 12px;
   border: 1px solid #cccccc;
   white-space: normal;
+}
+
+table.results > tbody > tr > td.selected {
+  background-color: #337AB4;
+  color: white;
+}
+
+table.results > tbody > tr > td.selected > a {
+  color: white;
+  text-decoration: none;
 }
 
 table.results.keyval > tbody > tr > td {

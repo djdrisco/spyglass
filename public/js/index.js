@@ -17,11 +17,11 @@ $(function() {
             var tags = _.object(_.map(vpc.Tags, function(tag) {
               return [tag.Key, tag.Value];
             }));
-            return [vpc.VpcId, tags, region.Region];
+            return [vpc.VpcId, tags, vpc.CidrBlock, region.Region];
           });
         }));
         result_table = _.sortBy(result_table, function(row) {return row[0]});
-        result_table.unshift(['Vpc ID', 'Tag(s)', 'Region']);
+        result_table.unshift(['VPC ID', 'Tag(s)', 'CIDR Block', 'Region']);
         create_table(result_table);
       },
       dataType: "json"
@@ -42,10 +42,10 @@ $(function() {
         if (_.isFunction(console && console.log)) console.log('external_ips', data);
         var result_table = _.flatten(_.map(data, function(region) {
           return _.map(region.Addresses, function(addr) {
-            return [addr.PublicIp, addr.PrivateIpAddress, addr.Domain, region.Region];
+            return [addr.PublicIp, addr.InstanceId, addr.PrivateIpAddress, addr.Domain, region.Region];
           });
         }));
-        result_table.unshift(['Public IP', 'Private IP', 'Domain', 'Region']);
+        result_table.unshift(['Public IP', 'Inst. ID', 'Private IP', 'Domain', 'Region']);
         create_table(result_table);
       },
       dataType: "json"
@@ -67,8 +67,9 @@ $(function() {
         var result_table = _.flatten(_.map(data, function(region) {
           return _.flatten(_.map(region.Reservations, function(resv) {return _.map(resv.Instances, function(inst) {
             var properties = {
+              'Inst. ID': inst.InstanceId,
               'Private IP': inst.PrivateIpAddress,
-              'Region': region.Region
+              'Avail. Zone': inst.Placement.AvailabilityZone
             };
             var secgroups = _.map(inst.SecurityGroups, function(sgrp) {
               return new Linkable(sgrp.GroupId, sgrp.GroupName, baseUrl + '/security_groups/' + sgrp.GroupId);
@@ -148,7 +149,7 @@ function render_value(val) {
     var tbody = $('<tbody>');
     _.each(val, function(subval, subkey) {
       var trow = $('<tr>');
-      trow.append($('<th>').text(subkey));
+      trow.append($('<th>').html(subkey.replace(/\s/, '&nbsp;')));
       trow.append($('<td>').append(render_value(subval)));
       tbody.append(trow);
     });
