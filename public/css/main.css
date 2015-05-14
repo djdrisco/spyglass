@@ -35,7 +35,7 @@ ul.report_list li a {
 
 
 #results {
-    margin: 10px 5px;
+    margin: 7px 5px;
     padding: 0px;
 }
 
@@ -60,14 +60,24 @@ table.results {
   margin:5px 0px 5px 0px;
 }
 
+table.root {
+  float:left;
+  clear:both;
+}
+
 table.results > thead > tr > th, table.results > tbody > tr > th {
   padding: 3px 6px 2px 6px;
   white-space: nowrap;
-  background: #868686; /* url('../util/gradient.php?color1=aaaaaa&color2=888888&height=15') repeat-x; */
+  background: #868686;
   border: 1px solid #777777;
   color: #ffffff;
   font-weight: normal;
   font-size: 12px;
+}
+
+table.results > thead > tr > th.title {
+  background: #444;
+  font-size: 14px;
 }
 
 table.results > thead > tr > th > a, table.results > tbody > tr > th > a {
@@ -108,7 +118,11 @@ table.results > tbody > tr > td {
   white-space: normal;
 }
 
-table.results > tbody > tr > td.selected {
+table.results > tbody > tr > td > a {
+  cursor: pointer;
+}
+
+table.results > tbody > tr > td.selected, table.results > tbody > tr:hover > td.selected {
   background-color: #337AB4;
   color: white;
 }
@@ -126,107 +140,8 @@ table.results.keyval > tbody > tr > td {
 }
 
 table.results > tbody > tr > td {
-  background: #ffffff; /* url('../util/gradient.php?color1=ffffff&color2=f0f0f0&height=20') repeat-x; */
+  background: #ffffff;
 }
 table.results > tbody > tr:hover > td {
   background: #ffeecc;
 }
-
-/*
-table.results td.clr1 {
-  background: #ffffff url('../util/gradient.php?color1=ffffff&color2=f0f0f0&height=20') repeat-x;
-}
-*/
-
-/* deprecated */
-table.results > tbody > tr > td.clr2 {
-  background: #ddddee;
-}
-table.results > tbody > tr > td.alt {
-  background: #ddddee;
-}
-table.results > tbody > tr > td.alt2 {
-  background: #cccccc;
-}
-
-table.results > tbody > tr > td.reviewed {
-  color: #666666;
-  background: #cccccc;
-  font-style: italic;
-}
-table.results > tbody > tr:hover > td.reviewed {
-  background: #ccccee;
-}
-
-table.results > tbody > tr > td.filtered {
-  background: #ccccdd;
-  font-style:italic;
-}
-table.results > tbody > tr:hover > td.filtered {
-  background: #ccccdd;
-}
-
-
-table.results > tbody > tr > td.longlink {
-  padding: 0px 2px;
-  border: none;
-  font-family: monaco,andale mono,monospace;
-  font-size: 11px;
-  border-bottom: 1px solid #cccccc;
-}
-table.results > tbody > tr > td.long {
-  padding:3px 6px;
-  background: #dddddd; /* url('../util/gradient.php?color1=999999&color2=dddddd&height=5') bottom left repeat-x; */
-  font-family: monaco,andale mono,monospace;
-  font-size: 11px;
-  color: #444444;
-}
-
-table.results > tbody > tr > td.longlink > span.display_link {
-  font: normal 9px tahoma;
-  color: #001144;
-  cursor: pointer;
-}
-
-table.results > tbody > tr > td.reviewed a:link {
-  color: #666666;
-  font-style: italic;
-}
-
-/* Style-less cells containing action links at end of row */
-table.results > thead > tr > th.bare {
-  border: none;
-  background: none;
-  font: 12px arial;
-  color: #555555;
-}
-table.results > tbody > tr > td.bare {
-  border: none;
-  background: none;
-  font: 12px arial;
-  color: #555555;
-}
-
-table.result_options > tbody > tr > td {
-  padding: 2px 6px 1px 6px;
-  font-size: 12px;
-  background: #ffffff; /* url('../util/gradient.php?color1=ffffff&color2=f0f0f0&height=20') repeat-x; */
-  border: 1px solid #cccccc;
-  margin-right: 5px;
-}
-
-span.hlight:hover {
-  text-decoration: underline;
-  color: maroon;
-}
-
-span.option_link {
-  font: 12px arial;
-  color: #777777;
-  cursor: pointer;
-}
-span.option_link:hover {
-  color: #cc0000;
-}
-
-

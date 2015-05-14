@@ -1,6 +1,7 @@
 var async = require('async');
 var AWS = require('aws-sdk');
 var express = require('express');
+var _ = require('lodash');
 var proxy = require('proxy-agent');
 var https_proxy = require("https-proxy-agent");
 var router = express.Router();
@@ -36,6 +37,27 @@ router.get('/instances', function(req, res) {
   });
 });
 
+router.get('/instances/:inst_id', function(req, res) {
+  collect_regions("describeInstances", {InstanceIds: [req.params.inst_id]}, function(err, data) {
+    if (err) return console.error(err);
+    res.send(data);
+  });
+});
+
+router.get('/security_groups', function(req, res) {
+  collect_regions("describeSecurityGroups", {}, function(err, data) {
+    if (err) return console.error(err);
+    res.send(data);
+  });
+});
+
+router.get('/security_groups/:group_id', function(req, res) {
+  collect_regions("describeSecurityGroups", {GroupIds: [req.params.group_id]}, function(err, data) {
+    if (err) return console.error(err);
+    res.send(data);
+  });
+});
+
 //////////////////////////////////////////////////////////////////////////////////////////
 
 module.exports = router;
@@ -47,7 +69,14 @@ function collect_regions(action, params, callback) {
       apiVersion: settings.apiVersion
     });
     ec2[action](params, function(err, data) {
-      if (err) return cb(err);
+      if (err) {
+        if (err.code && err.code.split('.')[1] === 'NotFound') {
+          // if "not found" error, simply return empty
+          return cb(null, {Region: region});
+        } else {
+          return cb(err);
+        }
+      }
       data.Region = region;
       cb(null, data);
     });

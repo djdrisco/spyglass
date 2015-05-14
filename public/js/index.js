@@ -4,27 +4,12 @@ $(function() {
   // VPCs 
    
   $('#vpcs').click(function() {
-    
     $("#results").text("");
-    $("#results").append($("<img>").attr("src", baseUrl+"/img/loader.gif"));
-    
-    $.ajax({
-      url: baseUrl + "/vpcs",
-      success: function(data) {
-        if (_.isFunction(console && console.log)) console.log('vpcs', data);
-        var result_table = _.flatten(_.map(data, function(region) {
-          return _.map(region.Vpcs, function(vpc) {
-            var tags = _.object(_.map(vpc.Tags, function(tag) {
-              return [tag.Key, tag.Value];
-            }));
-            return [vpc.VpcId, tags, vpc.CidrBlock, region.Region];
-          });
-        }));
-        result_table = _.sortBy(result_table, function(row) {return row[0]});
-        result_table.unshift(['VPC ID', 'Tag(s)', 'CIDR Block', 'Region']);
-        create_table(result_table);
-      },
-      dataType: "json"
+    show_loader();
+    report.vpcs(function(err, title, table_data) {
+      var table = create_table(title, table_data);
+      $("#results").text("");
+      $("#results").append(table);     
     });
   });
   
@@ -32,23 +17,12 @@ $(function() {
   // External IPs 
    
   $('#external_ips').click(function() {
-    
     $("#results").text("");
-    $("#results").append($("<img>").attr("src", baseUrl+"/img/loader.gif"));
-    
-    $.ajax({
-      url: baseUrl + "/external_ips",
-      success: function(data) {
-        if (_.isFunction(console && console.log)) console.log('external_ips', data);
-        var result_table = _.flatten(_.map(data, function(region) {
-          return _.map(region.Addresses, function(addr) {
-            return [addr.PublicIp, addr.InstanceId, addr.PrivateIpAddress, addr.Domain, region.Region];
-          });
-        }));
-        result_table.unshift(['Public IP', 'Inst. ID', 'Private IP', 'Domain', 'Region']);
-        create_table(result_table);
-      },
-      dataType: "json"
+    show_loader();  
+    report.external_ips(function(err, title, table_data) {
+      var table = create_table(title, table_data);
+      $("#results").text("");
+      $("#results").append(table);      
     });
   });
   
@@ -56,37 +30,13 @@ $(function() {
   // Instances
   
   $('#instances').click(function() {
-    
     $("#results").text("");
-    $("#results").append($("<img>").attr("src", baseUrl+"/img/loader.gif"));
-    
-    $.ajax({
-      url: baseUrl + "/instances",
-      success: function(data) {
-        if (_.isFunction(console && console.log)) console.log('instances', data);
-        var result_table = _.flatten(_.map(data, function(region) {
-          return _.flatten(_.map(region.Reservations, function(resv) {return _.map(resv.Instances, function(inst) {
-            var properties = {
-              'Inst. ID': inst.InstanceId,
-              'Private IP': inst.PrivateIpAddress,
-              'Avail. Zone': inst.Placement.AvailabilityZone
-            };
-            var secgroups = _.map(inst.SecurityGroups, function(sgrp) {
-              return new Linkable(sgrp.GroupId, sgrp.GroupName, baseUrl + '/security_groups/' + sgrp.GroupId);
-            });
-            var tags = _.object(_.map(inst.Tags, function(tag) {
-              return [tag.Key, tag.Value];
-            }));
-            var name = tags.Name;
-            return [name, properties, secgroups, tags];
-          });}));
-        }));
-        result_table = _.sortBy(result_table, function(row) {return row[0]});
-        result_table.unshift(['Name', 'Properties', 'Security Group(s)', 'Tag(s)']);
-        create_table(result_table);
-      },
-      dataType: "json"
-    });    
+    show_loader();  
+    report.instances(function(err, title, table_data) {
+      var table = create_table(title, table_data);
+      $("#results").text("");
+      $("#results").append(table);      
+    });  
     
   });
 
@@ -94,18 +44,23 @@ $(function() {
   
 });
 
+function show_loader() {
+  $("#results").append($("<img>").attr("src", baseUrl + "/img/loader.gif").css('float', 'left').css('clear', 'both'));  
+}
 
 // Render 2D array table as HTML table in #results
-function create_table(table_data) {
+function create_table(title, table_data) {
 
-  var table = $('<table>').addClass('results');
+  var table = $('<table>').addClass('results').addClass('root');
 
   // header
+  title = title.replace(/\//g, '&thinsp;/&thinsp;');
+  var title_tr = $('<tr>').append($('<th>').attr('colspan', table_data[1].length).addClass('title').html(title));
   var tr = $('<tr>');
   _.each(_.first(table_data), function(field_name) {
     tr.append($('<th>').text(field_name));
   });
-  table.append($('<thead>').append(tr));
+  table.append($('<thead>').append(title_tr).append(tr));
   
   // body
   var tbody = $('<tbody>');
@@ -121,17 +76,47 @@ function create_table(table_data) {
   table.append(tbody);
   table.data('data', table_data); // save data to table to apply post-transformations
   
-  $("#results").text("");
-  $("#results").append(table);
+  return table;
 }
 
 // Takes a heterogenous value and returns a jQuery element
 function render_value(val) {
-  if (val instanceof Linkable) {
+  if (val instanceof Table) {
+    var table = $('<table>').addClass('results');
+    // header
+    var tr = $('<tr>');
+    _.each(_.first(val.data), function(field_name) {
+      tr.append($('<th>').text(field_name));
+    });
+    table.append($('<thead>').append(tr));
+    // body
+    var tbody = $('<tbody>');
+    _.each(_.rest(val.data), function(row) {
+      var tr = $('<tr>');
+      _.each(row, function(field) {
+        var elem = render_value(field);
+        tr.append($('<td>').append(elem));
+      });
+      tbody.append(tr);
+    });
+    table.append(tbody);
+    return table;
+  } else if (val instanceof Linkable) {
     var link = $('<a>');
     link.data('id', val.id);
     link.text(val.display);
-    link.attr('href', val.target);
+    link.click(function() {
+      console.log(link.id);
+      link.closest('td').addClass('selected')
+      var table = link.closest('table.root');
+      table.nextAll().remove();
+      show_loader();
+      report[val.report].apply(null, val.params.concat(function(err, title, table) {
+        $('#results').children('img').remove();
+        if (err) return console.error(err);
+        drilldown(link.closest('td'), title, table);        
+      }));
+    });
     return link;
   } else if (_.isArray(val)) {
     if (val.length > 1) {
@@ -161,10 +146,32 @@ function render_value(val) {
   }
 }
 
+function drilldown(origin_td, title, result_table) {
+  console.log("drilldown", origin_td, result_table);
+  
+  // Hide all rows other than the one containing selected item
+  var origin_tbody = origin_td.closest('table.root > tbody');
+  var origin_tr = origin_td.closest('table.root > tbody > tr');
+  var not_selected = origin_tbody.children().not(origin_tr);
+  not_selected.detach();
+  var tbody_hidden = $('<tbody>').addClass('hidden').css('display', 'none');
+  tbody_hidden.append(not_selected);
+  origin_tbody.parent().append(tbody_hidden);
+  
+  $('#results').append(create_table(title, result_table));
+}
+
 // Constructor of 'Linkable' type
-function Linkable(id, display, target) {
+function Linkable(id, display, report, params) {
   this.id = id;
   this.display = display;
-  this.target = target;
+  this.report = report;
+  this.params = params;
+  return this;
+}
+
+// Constructor of 'Table' type
+function Table(table_data) {
+  this.data = table_data;
   return this;
 }
