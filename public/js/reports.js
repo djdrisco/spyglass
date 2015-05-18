@@ -30,7 +30,8 @@ var report = {
         if (_.isFunction(console && console.log)) console.log('/external_ips', data);
         var data_table = _.flatten(_.map(data, function(region) {
           return _.map(region.Addresses, function(addr) {
-            return [addr.PublicIp, addr.InstanceId, addr.PrivateIpAddress, addr.Domain, region.Region];
+            var inst = new Linkable(addr.InstanceId, addr.InstanceId, 'instance', [addr.InstanceId]);
+            return [addr.PublicIp, inst, addr.PrivateIpAddress, addr.Domain, region.Region];
           });
         }));
         data_table.unshift(['Public IP', 'Inst. ID', 'Private IP', 'Domain', 'Region']);
@@ -123,7 +124,37 @@ var report = {
       },
       dataType: "json"
     });
-  }
+  },
+  
+  instance: function(inst_id, callback) {
+    $.ajax({
+      url: baseUrl + "/instances/" + inst_id,
+      success: function(data) {
+        if (_.isFunction(console && console.log)) console.log('/instances/' + inst_id, data);
+        var data_table = _.flatten(_.map(data, function(region) {
+          return _.flatten(_.map(region.Reservations, function(resv) {return _.map(resv.Instances, function(inst) {
+            var properties = {
+              'Inst. ID': inst.InstanceId,
+              'Private IP': inst.PrivateIpAddress,
+              'Avail. Zone': inst.Placement.AvailabilityZone
+            };
+            var secgroups = _.map(inst.SecurityGroups, function(sgrp) {
+              return new Linkable(sgrp.GroupId, sgrp.GroupName, 'security_group', [sgrp.GroupId])            
+            });
+            var tags = _.object(_.map(inst.Tags, function(tag) {
+              return [tag.Key, tag.Value];
+            }));
+            var name = tags.Name;
+            return [name, properties, secgroups, tags];
+          });}));
+        }));
+        data_table = _.sortBy(data_table, function(row) {return row[0]});
+        data_table.unshift(['Name', 'Properties', 'Security Group(s)', 'Tag(s)']);
+        callback(null, '/Instances/{id}', data_table, {id: inst_id});
+      },
+      dataType: "json"
+    });
+  }  
   
 };
 
