@@ -29,6 +29,7 @@ app.get('/', function(req, res, next) {
 });
 
 fs.readdirSync(path.join(__dirname, 'routes')).forEach(function(file) {
+  if (file.match(/^\./)) return; // ignore hidden files
   var mod = require(path.join(__dirname, 'routes', file));
   app.use('/', mod);
 });
