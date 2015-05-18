@@ -119,7 +119,7 @@ var report = {
           });
         }));
         data_table.unshift(['Name', 'Properties', 'Ingress Perm.', 'Egress Perm.', 'Tag(s)']);
-        callback(null, '/SecurityGroups/' + group_id, data_table);
+        callback(null, '/SecurityGroups/{id}', data_table, {id: group_id});
       },
       dataType: "json"
     });

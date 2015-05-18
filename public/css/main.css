@@ -1,16 +1,16 @@
 
-.title {
-    margin-left: 20px;
-    font-size: 24px;
-    font-weight: normal;
-}
-
 #nav {
     border-radius: 5px;
     margin: 10px 5px;
     padding: 5px;
     background-color: #444;
     color: #fff;
+}
+
+#nav .title {
+    margin-left: 20px;
+    font-size: 24px;
+    font-weight: normal;
 }
 
 #nav hr {
@@ -43,6 +43,19 @@ ul.report_list li a {
   float: left;
   clear: both;
   background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='30' height='20'><path d='M0 0L14 0L7 20Z' style='fill:rgba(51, 122, 180, 0.4);'/></svg>") repeat-x;
+}
+
+.report_param {
+  color: #7DA8CA;
+}
+
+/* Results table overrides */
+
+table.results > thead > tr > th.title {
+    margin-left: 20px;
+    font-size: 24px;
+    font-weight: normal;
+    color: #999;
 }
 
 /*

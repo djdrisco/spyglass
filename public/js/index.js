@@ -6,8 +6,8 @@ $(function() {
   $('#vpcs').click(function() {
     $("#results").text("");
     show_loader();
-    report.vpcs(function(err, title, table_data) {
-      var table = create_table(title, table_data);
+    report.vpcs(function(err, title, table_data, options) {
+      var table = create_table(title, table_data, options);
       $("#results").text("");
       $("#results").append(table);     
     });
@@ -19,8 +19,8 @@ $(function() {
   $('#external_ips').click(function() {
     $("#results").text("");
     show_loader();  
-    report.external_ips(function(err, title, table_data) {
-      var table = create_table(title, table_data);
+    report.external_ips(function(err, title, table_data, options) {
+      var table = create_table(title, table_data, options);
       $("#results").text("");
       $("#results").append(table);      
     });
@@ -32,8 +32,8 @@ $(function() {
   $('#instances').click(function() {
     $("#results").text("");
     show_loader();  
-    report.instances(function(err, title, table_data) {
-      var table = create_table(title, table_data);
+    report.instances(function(err, title, table_data, options) {
+      var table = create_table(title, table_data, options);
       $("#results").text("");
       $("#results").append(table);      
     });  
@@ -46,8 +46,8 @@ $(function() {
   $('#secgroups').click(function() {
     $("#results").text("");
     show_loader();  
-    report.security_groups(function(err, title, table_data) {
-      var table = create_table(title, table_data);
+    report.security_groups(function(err, title, table_data, options) {
+      var table = create_table(title, table_data, options);
       $("#results").text("");
       $("#results").append(table);      
     });  
@@ -63,12 +63,15 @@ function show_loader() {
 }
 
 // Render 2D array table as HTML table in #results
-function create_table(title, table_data) {
+function create_table(title, table_data, options) {
 
   var table = $('<table>').addClass('results').addClass('root');
 
   // header
   title = title.replace(/\//g, '&thinsp;/&thinsp;');
+  _.each(options, function(val, key) {
+    title = title.replace('{' + key + '}', '<span class="report_param">' + val + '</span>');
+  });
   var title_tr = $('<tr>').append($('<th>').attr('colspan', table_data[1].length).addClass('title').html(title));
   var tr = $('<tr>');
   _.each(_.first(table_data), function(field_name) {
@@ -127,10 +130,10 @@ function render_value(val) {
       var table = link.closest('table.root');
       table.nextAll().remove();
       show_loader();
-      report[val.report].apply(null, val.params.concat(function(err, title, table) {
+      report[val.report].apply(null, val.params.concat(function(err, title, table, options) {
         $('#results').children('img').remove();
         if (err) return console.error(err);
-        drilldown(link.closest('td'), title, table);        
+        drilldown(link.closest('td'), title, table, options);        
       }));
     });
     return link;
@@ -162,7 +165,7 @@ function render_value(val) {
   }
 }
 
-function drilldown(origin_td, title, result_table) {
+function drilldown(origin_td, title, result_table, options) {
 
   // Hide all rows other than the one containing selected item
   var origin_tbody = origin_td.closest('table.root > tbody');
@@ -175,7 +178,7 @@ function drilldown(origin_td, title, result_table) {
   
   // Create drilldown table, append underneath with spacer
   var origin_table = origin_td.closest('table.root');
-  var drilldown_table = create_table(title, result_table).addClass('drilldown');
+  var drilldown_table = create_table(title, result_table, options).addClass('drilldown');
   var spacer = $('<div>').addClass('drilldown-table-spacer');
   $('#results').append(spacer).append(drilldown_table);
   var set_spacer_width = function() {
