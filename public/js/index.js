@@ -147,8 +147,7 @@ function render_value(val) {
 }
 
 function drilldown(origin_td, title, result_table) {
-  console.log("drilldown", origin_td, result_table);
-  
+
   // Hide all rows other than the one containing selected item
   var origin_tbody = origin_td.closest('table.root > tbody');
   var origin_tr = origin_td.closest('table.root > tbody > tr');
@@ -158,7 +157,16 @@ function drilldown(origin_td, title, result_table) {
   tbody_hidden.append(not_selected);
   origin_tbody.parent().append(tbody_hidden);
   
-  $('#results').append(create_table(title, result_table));
+  // Create drilldown table, append underneath with spacer
+  var origin_table = origin_td.closest('table.root');
+  var drilldown_table = create_table(title, result_table).addClass('drilldown');
+  var spacer = $('<div>').addClass('drilldown-table-spacer');
+  $('#results').append(spacer).append(drilldown_table);
+  var set_spacer_width = function() {
+    spacer.css('width', Math.floor(Math.min(origin_table.width(), drilldown_table.width())/30)*30);
+  };
+  $(window).resize(set_spacer_width);
+  set_spacer_width();
 }
 
 // Constructor of 'Linkable' type

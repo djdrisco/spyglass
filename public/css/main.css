@@ -1,6 +1,3 @@
-body {
-    background: #ffffff url('../img/greyzz.png') repeat;
-}
 
 .title {
     margin-left: 20px;
@@ -39,7 +36,24 @@ ul.report_list li a {
     padding: 0px;
 }
 
-/* Bootstrap overrides */
+.drilldown-table-spacer {
+  height: 20px;
+  margin: 5px 0px 5px 10px;
+  padding: 0px;
+  float: left;
+  clear: both;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='30' height='20'><path d='M0 0L14 0L7 20Z' style='fill:rgba(51, 122, 180, 0.4);'/></svg>") repeat-x;
+}
+
+/*
+-------------------------------------------------------------------------------------------------------
+BOOTSTRAP OVERRIDES
+-------------------------------------------------------------------------------------------------------
+*/
+
+body {
+    background: #ffffff url('../img/greyzz.png') repeat;
+}
 
 hr {
   margin-top: 5px;
