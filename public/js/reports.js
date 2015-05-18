@@ -70,6 +70,33 @@ var report = {
     });    
   },
   
+  security_groups: function(callback) {
+    $.ajax({
+      url: baseUrl + "/security_groups",
+      success: function(data) {
+        if (_.isFunction(console && console.log)) console.log('/security_group', data);
+        var data_table = _.flatten(_.map(data, function(region) {
+          return _.map(region.SecurityGroups, function(secgrp) {
+            var properties = {
+              'Group ID': secgrp.GroupId,
+              'Description': secgrp.Description,
+              'VPC': secgrp.VpcId
+            };
+            var ingress = new Table(processPermissions(secgrp.IpPermissions));
+            var egress = new Table(processPermissions(secgrp.IpPermissionsEgress));
+            var tags = _.object(_.map(secgrp.Tags, function(tag) {
+              return [tag.Key, tag.Value];
+            }));
+            return [secgrp.GroupName, properties, ingress, egress, tags];
+          });
+        }));
+        data_table.unshift(['Name', 'Properties', 'Ingress Perm.', 'Egress Perm.', 'Tag(s)']);
+        callback(null, '/SecurityGroups', data_table);
+      },
+      dataType: "json"
+    });
+  },
+  
   // Parameterized reports
   
   security_group: function(group_id, callback) {
@@ -83,18 +110,15 @@ var report = {
               'Group ID': secgrp.GroupId,
               'Description': secgrp.Description
             };
-            var permissions = new Table([
-              ['col1', 'col2'],
-              ['valA1', 'valA2'],
-              ['valB1', 'valB2']
-            ]);
+            var ingress = new Table(processPermissions(secgrp.IpPermissions));
+            var egress = new Table(processPermissions(secgrp.IpPermissionsEgress));
             var tags = _.object(_.map(secgrp.Tags, function(tag) {
               return [tag.Key, tag.Value];
             }));
-            return [secgrp.GroupName, properties, permissions, tags];
+            return [secgrp.GroupName, properties, ingress, egress, tags];
           });
         }));
-        data_table.unshift(['Name', 'Properties', 'Permissions', 'Tag(s)']);
+        data_table.unshift(['Name', 'Properties', 'Ingress Perm.', 'Egress Perm.', 'Tag(s)']);
         callback(null, '/SecurityGroups/' + group_id, data_table);
       },
       dataType: "json"
@@ -102,3 +126,20 @@ var report = {
   }
   
 };
+
+function processPermissions(perms) {
+  var data = _.flatten(_.map(perms, function(portperm) {
+    var protocol = portperm.IpProtocol == -1 ? getAny() : portperm.IpProtocol;
+    var from = portperm.FromPort == -1 ? getAny() : portperm.FromPort;
+    var to = portperm.ToPort == -1 ? getAny() : portperm.ToPort;
+    return _.map(portperm.IpRanges, function(iprange) {
+      return [protocol, from, to, iprange.CidrIp];
+    });
+  }));
+  data.unshift(['Protocol', 'From', 'To', 'CIDR']);
+  return data;
+}
+
+function getAny() {
+  return new HTML('<span style="font-weight:bold;font-style:italic;font-size:10px;color:#444;">ANY</span>');
+}

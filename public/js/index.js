@@ -41,6 +41,20 @@ $(function() {
   });
 
   ////////////////////////////////////////////////////////////////////////////////////////
+  // Security Groups
+  
+  $('#secgroups').click(function() {
+    $("#results").text("");
+    show_loader();  
+    report.security_groups(function(err, title, table_data) {
+      var table = create_table(title, table_data);
+      $("#results").text("");
+      $("#results").append(table);      
+    });  
+    
+  });  
+  
+  ////////////////////////////////////////////////////////////////////////////////////////
   
 });
 
@@ -101,6 +115,8 @@ function render_value(val) {
     });
     table.append(tbody);
     return table;
+  } else if (val instanceof HTML) {
+    return $('<span>').html(val.html);
   } else if (val instanceof Linkable) {
     var link = $('<a>');
     link.data('id', val.id);
@@ -140,7 +156,7 @@ function render_value(val) {
     });
     return $('<table>').addClass('results').addClass('keyval').append(tbody);        
   } else if (_.isString(val)) {
-    return val;
+    return $('<span>').text(val);
   } else {
     return val;
   }
@@ -181,5 +197,11 @@ function Linkable(id, display, report, params) {
 // Constructor of 'Table' type
 function Table(table_data) {
   this.data = table_data;
+  return this;
+}
+
+// Constructor of 'Table' type
+function HTML(html) {
+  this.html = html;
   return this;
 }
