@@ -37,8 +37,8 @@ router.get('/instances', function(req, res) {
   });
 });
 
-router.get('/instances/:inst_id', function(req, res) {
-  collect_regions("describeInstances", {InstanceIds: [req.params.inst_id]}, function(err, data) {
+router.get('/instances/:inst_ids', function(req, res) {
+  collect_regions("describeInstances", {InstanceIds: req.params.inst_ids.split(',')}, function(err, data) {
     if (err) return console.error(err);
     res.send(data);
   });

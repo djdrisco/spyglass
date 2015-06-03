@@ -31,11 +31,18 @@ var report = {
         var data_table = _.flatten(_.map(data, function(region) {
           return _.map(region.Addresses, function(addr) {
             var inst = new Linkable(addr.InstanceId, addr.InstanceId, 'instance', [addr.InstanceId]);
+            /*
+            var inst_lkup = new AJAXLookup('/instances', addr.InstanceId, '', function(inst) {
+              var tags = _.object(_.map(inst.Tags, function(tag) {
+                return [tag.Key, tag.Value];
+              }));
+            });
+            */
             return [addr.PublicIp, inst, addr.PrivateIpAddress, addr.Domain, region.Region];
           });
         }));
         data_table.unshift(['Public IP', 'Inst. ID', 'Private IP', 'Domain', 'Region']);
-        callback(null, '/External_IPs', data_table);
+        callback(null, '/ExternalIPs', data_table);
       },
       dataType: "json"
     });    
@@ -48,11 +55,16 @@ var report = {
         if (_.isFunction(console && console.log)) console.log('/instances', data);
         var data_table = _.flatten(_.map(data, function(region) {
           return _.flatten(_.map(region.Reservations, function(resv) {return _.map(resv.Instances, function(inst) {
-            var properties = {
-              'Inst. ID': inst.InstanceId,
-              'Private IP': inst.PrivateIpAddress,
-              'Avail. Zone': inst.Placement.AvailabilityZone
-            };
+            var prv_ips = _.union([inst.PrivateIpAddress], _.compact(_.flatten(_.map(inst.NetworkInterfaces, function(iface) {
+              return _.union([iface.PrivateIpAddress], _.compact(_.map(iface.PrivateIpAddresses, function(ip) {
+                return ip.PrivateIpAddress;
+              })));
+            }))));
+            var pub_ips = _.union([inst.PublicIpAddress], _.compact(_.flatten(_.map(inst.NetworkInterfaces, function(iface) {
+              return _.union([iface.PublicIpAddress], _.compact(_.map(iface.PublicIpAddresses, function(ip) {
+                return ip.PublicIpAddress;
+              })));
+            }))));
             var secgroups = _.map(inst.SecurityGroups, function(sgrp) {
               return new Linkable(sgrp.GroupId, sgrp.GroupName, 'security_group', [sgrp.GroupId])            
             });
@@ -60,6 +72,12 @@ var report = {
               return [tag.Key, tag.Value];
             }));
             var name = tags.Name;
+            var properties = {
+              'Inst. ID': inst.InstanceId,
+              'Public IP(s)': pub_ips,
+              'Private IP(s)': prv_ips,
+              'Avail. Zone': inst.Placement.AvailabilityZone
+            };
             return [name, properties, secgroups, tags];
           });}));
         }));
@@ -91,7 +109,7 @@ var report = {
             return [secgrp.GroupName, properties, ingress, egress, tags];
           });
         }));
-        data_table.unshift(['Name', 'Properties', 'Ingress Perm.', 'Egress Perm.', 'Tag(s)']);
+        data_table.unshift(['Name', 'Properties', 'Ingress Permissions', 'Egress Permissions', 'Tag(s)']);
         callback(null, '/SecurityGroups', data_table);
       },
       dataType: "json"
@@ -119,7 +137,7 @@ var report = {
             return [secgrp.GroupName, properties, ingress, egress, tags];
           });
         }));
-        data_table.unshift(['Name', 'Properties', 'Ingress Perm.', 'Egress Perm.', 'Tag(s)']);
+        data_table.unshift(['Name', 'Properties', 'Ingress Permissions', 'Egress Permissions', 'Tag(s)']);
         callback(null, '/SecurityGroups/{id}', data_table, {id: group_id});
       },
       dataType: "json"
@@ -133,11 +151,16 @@ var report = {
         if (_.isFunction(console && console.log)) console.log('/instances/' + inst_id, data);
         var data_table = _.flatten(_.map(data, function(region) {
           return _.flatten(_.map(region.Reservations, function(resv) {return _.map(resv.Instances, function(inst) {
-            var properties = {
-              'Inst. ID': inst.InstanceId,
-              'Private IP': inst.PrivateIpAddress,
-              'Avail. Zone': inst.Placement.AvailabilityZone
-            };
+            var prv_ips = _.union([inst.PrivateIpAddress], _.compact(_.flatten(_.map(inst.NetworkInterfaces, function(iface) {
+              return _.union([iface.PrivateIpAddress], _.compact(_.map(iface.PrivateIpAddresses, function(ip) {
+                return ip.PrivateIpAddress;
+              })));
+            }))));
+            var pub_ips = _.union([inst.PublicIpAddress], _.compact(_.flatten(_.map(inst.NetworkInterfaces, function(iface) {
+              return _.union([iface.PublicIpAddress], _.compact(_.map(iface.PublicIpAddresses, function(ip) {
+                return ip.PublicIpAddress;
+              })));
+            }))));
             var secgroups = _.map(inst.SecurityGroups, function(sgrp) {
               return new Linkable(sgrp.GroupId, sgrp.GroupName, 'security_group', [sgrp.GroupId])            
             });
@@ -145,6 +168,12 @@ var report = {
               return [tag.Key, tag.Value];
             }));
             var name = tags.Name;
+            var properties = {
+              'Inst. ID': inst.InstanceId,
+              'Public IP(s)': pub_ips,
+              'Private IP(s)': prv_ips,
+              'Avail. Zone': inst.Placement.AvailabilityZone
+            };
             return [name, properties, secgroups, tags];
           });}));
         }));

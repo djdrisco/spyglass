@@ -24,6 +24,32 @@ app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
+// Auth ==================================================================================
+// uncomment this code when using webproxy or app-proxy for authentication
+
+/*
+process.stdout.write((new Date()).toString() + 'Spyglass started...\n');
+var auth = null;
+app.use(function(req, res, next) {
+  // Used to implement authentication handled by a proxy upstream, by default assume "webuser" is always logged in.
+  if (req.headers["x-authenticated-user"]) {
+    auth = {user: req.headers["x-authenticated-user"]};
+  }
+  next();
+});
+// Force user to be logged-in for access
+app.use(function(req, res, next) {
+  // Redirect user to proxy login page if not logged in
+  if (!auth) {
+    res.writeHead(301, {'Location': '/login?login-required&referrer=' + settings.baseUrl + req.url}); // redirect
+    res.end();
+    return;
+  }
+  next();
+})
+*/
+// =======================================================================================
+
 app.get('/', function(req, res, next) {
   res.render('index', {settings: settings});
 });

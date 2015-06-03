@@ -133,7 +133,7 @@ function render_value(val) {
       report[val.report].apply(null, val.params.concat(function(err, title, table, options) {
         $('#results').children('img').remove();
         if (err) return console.error(err);
-        drilldown(link.closest('td'), title, table, options);        
+        drilldown(link.closest('td'), title, table, options);
       }));
     });
     return link;
@@ -194,6 +194,13 @@ function Linkable(id, display, report, params) {
   this.display = display;
   this.report = report;
   this.params = params;
+  return this;
+}
+
+function AJAXLookup(path, id, renderer) {
+  this.path = path;
+  this.id = id;
+  this.renderer = renderer;
   return this;
 }
 
