@@ -58,6 +58,12 @@ router.get('/security_groups/:group_id', function(req, res) {
   });
 });
 
+router.get('/subnets', function(req, res) {
+  collect_regions("describeSubnets", {}, function(err, data) {
+    if (err) return console.error(err);
+    res.send(data);
+  });
+});
 //////////////////////////////////////////////////////////////////////////////////////////
 
 module.exports = router;

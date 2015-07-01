@@ -1,61 +1,74 @@
 $(function() {
-    
+
   ////////////////////////////////////////////////////////////////////////////////////////
   // VPCs 
-   
+
   $('#vpcs').click(function() {
     $("#results").text("");
     show_loader();
     report.vpcs(function(err, title, table_data, options) {
       var table = create_table(title, table_data, options);
       $("#results").text("");
-      $("#results").append(table);     
+      $("#results").append(table);
     });
   });
-  
+
   ////////////////////////////////////////////////////////////////////////////////////////
   // External IPs 
-   
+
   $('#external_ips').click(function() {
     $("#results").text("");
-    show_loader();  
+    show_loader();
     report.external_ips(function(err, title, table_data, options) {
       var table = create_table(title, table_data, options);
       $("#results").text("");
-      $("#results").append(table);      
+      $("#results").append(table);
     });
   });
-  
+
   ////////////////////////////////////////////////////////////////////////////////////////
   // Instances
-  
+
   $('#instances').click(function() {
     $("#results").text("");
-    show_loader();  
+    show_loader();
     report.instances(function(err, title, table_data, options) {
       var table = create_table(title, table_data, options);
       $("#results").text("");
-      $("#results").append(table);      
-    });  
-    
+      $("#results").append(table);
+    });
+
   });
 
   ////////////////////////////////////////////////////////////////////////////////////////
   // Security Groups
-  
+
   $('#secgroups').click(function() {
     $("#results").text("");
-    show_loader();  
+    show_loader();
     report.security_groups(function(err, title, table_data, options) {
       var table = create_table(title, table_data, options);
       $("#results").text("");
-      $("#results").append(table);      
-    });  
-    
-  });  
-  
+      $("#results").append(table);
+    });
+
+  });
+
   ////////////////////////////////////////////////////////////////////////////////////////
-  
+  // Subnets
+
+  $('#subnets').click(function() {
+    $("#results").text("");
+    show_loader();
+    report.subnets(function(err, title, table_data, options) {
+      var table = create_table(title, table_data, options);
+      $("#results").text("");
+      $("#results").append(table);
+    });
+  });
+
+  ////////////////////////////////////////////////////////////////////////////////////////
+
 });
 
 function show_loader() {
@@ -197,6 +210,7 @@ function Linkable(id, display, report, params) {
   return this;
 }
 
+// Used for asynchronous lookup on other reports
 function AJAXLookup(path, id, renderer) {
   this.path = path;
   this.id = id;

@@ -22,7 +22,7 @@ app.use(logger('dev'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(cookieParser());
-app.use(express.static(path.join(__dirname, 'public')));
+app.use(settings.baseUrl || '/', express.static(path.join(__dirname, 'public')));
 
 // Auth ==================================================================================
 // uncomment this code when using webproxy or app-proxy for authentication
@@ -50,14 +50,14 @@ app.use(function(req, res, next) {
 */
 // =======================================================================================
 
-app.get('/', function(req, res, next) {
+app.get(settings.baseUrl || '/', function(req, res, next) {
   res.render('index', {settings: settings});
 });
 
 fs.readdirSync(path.join(__dirname, 'routes')).forEach(function(file) {
   if (file.match(/^\./)) return; // ignore hidden files
   var mod = require(path.join(__dirname, 'routes', file));
-  app.use('/', mod);
+  app.use(settings.baseUrl || '/', mod);
 });
 
 // catch 404 and forward to error handlers

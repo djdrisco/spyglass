@@ -183,7 +183,36 @@ var report = {
       },
       dataType: "json"
     });
-  }  
+  },
+  
+  subnets: function(callback) {
+    $.ajax({
+      url: baseUrl + "/subnets",
+      success: function(data) {
+        if (_.isFunction(console && console.log)) console.log('/subnets', data);
+        var data_table = _.flatten(_.map(data, function(region) {
+          return _.map(region.Subnets, function(subnet) {
+            var tags = _.object(_.map(subnet.Tags, function(tag) {
+              return [tag.Key, tag.Value];
+            }));
+            var properties = {
+              'Subnet ID': subnet.SubnetId,
+              'State': subnet.State,
+              'Avail. Zone': subnet.AvailabilityZone,
+              'VPC': subnet.VpcId,
+              'Avail. IPs': subnet.AvailableIpAddressCount
+            };
+            var name = tags.Name;
+            return [name, subnet.CidrBlock, properties, tags];
+          });
+        }));
+        data_table = _.sortBy(data_table, function(row) {return row[0]});
+        data_table.unshift(['Name', 'CIDR', 'Properties', 'Tag(s)']);
+        callback(null, '/Instances', data_table);
+      },
+      dataType: "json"
+    });    
+  },
   
 };
 
