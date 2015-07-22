@@ -49,6 +49,14 @@ ul.report_list li a {
   color: #7DA8CA;
 }
 
+.close_link {
+  cursor: pointer;
+  color: #7DA8CA;
+}
+
+.close_link:hover {
+  color: #FFFBBE;
+}
 /* Results table overrides */
 
 table.results > thead > tr > th.title {

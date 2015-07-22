@@ -141,11 +141,22 @@ function render_value(val) {
       link.closest('td').addClass('selected')
       var table = link.closest('table.root');
       table.nextAll().remove();
+
+      // Hide all rows other than the one containing selected item
+      var origin_td = link.closest('td');
+      var origin_tbody = origin_td.closest('table.root > tbody');
+      var origin_tr = origin_td.closest('table.root > tbody > tr');
+      var not_selected = origin_tbody.children().not(origin_tr);
+      not_selected.detach();
+      var tbody_hidden = $('<tbody>').addClass('hidden').css('display', 'none');
+      tbody_hidden.append(not_selected);
+      origin_tbody.parent().append(tbody_hidden);
+
       show_loader();
       report[val.report].apply(null, val.params.concat(function(err, title, table, options) {
         $('#results').children('img').remove();
         if (err) return console.error(err);
-        drilldown(link.closest('td'), title, table, options);
+        drilldown(origin_td, title, table, options);
       }));
     });
     return link;
@@ -178,21 +189,21 @@ function render_value(val) {
 }
 
 function drilldown(origin_td, title, result_table, options) {
-
-  // Hide all rows other than the one containing selected item
-  var origin_tbody = origin_td.closest('table.root > tbody');
-  var origin_tr = origin_td.closest('table.root > tbody > tr');
-  var not_selected = origin_tbody.children().not(origin_tr);
-  not_selected.detach();
-  var tbody_hidden = $('<tbody>').addClass('hidden').css('display', 'none');
-  tbody_hidden.append(not_selected);
-  origin_tbody.parent().append(tbody_hidden);
   
   // Create drilldown table, append underneath with spacer
   var origin_table = origin_td.closest('table.root');
   var drilldown_table = create_table(title, result_table, options).addClass('drilldown');
   var spacer = $('<div>').addClass('drilldown-table-spacer');
   $('#results').append(spacer).append(drilldown_table);
+  var close_link = $('<a>').addClass('close_link').text('[close]');
+  close_link.on('click', function() {
+    drilldown_table.remove();
+    spacer.remove();
+    var hidden_tbody = origin_table.children('tbody.hidden');
+    origin_table.children('tbody').first().append(hidden_tbody.children());
+    hidden_tbody.remove();
+  });
+  drilldown_table.find('th.title').append($('<div>').css('float', 'right').append(close_link));
   var set_spacer_width = function() {
     spacer.css('width', Math.floor(Math.min(origin_table.width(), drilldown_table.width())/30)*30);
   };
