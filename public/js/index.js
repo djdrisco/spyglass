@@ -138,7 +138,6 @@ function render_value(val) {
     link.data('id', val.id);
     link.text(val.display);
     link.click(function() {
-      console.log(link.id);
       link.closest('td').addClass('selected')
       var table = link.closest('table.root');
       table.nextAll().remove();

@@ -61,9 +61,9 @@ var report = {
               })));
             }))));
             var pub_ips = _.union([inst.PublicIpAddress], _.compact(_.flatten(_.map(inst.NetworkInterfaces, function(iface) {
-              return _.union([iface.PublicIpAddress], _.compact(_.map(iface.PublicIpAddresses, function(ip) {
-                return ip.PublicIpAddress;
-              })));
+              return _.compact(_.map(iface.PrivateIpAddresses, function(ip) {
+                return _.isObject(ip.Association) && ip.Association.PublicIp;
+              }));
             }))));
             var secgroups = _.map(inst.SecurityGroups, function(sgrp) {
               return new Linkable(sgrp.GroupId, sgrp.GroupName, 'security_group', [sgrp.GroupId])            
@@ -157,9 +157,9 @@ var report = {
               })));
             }))));
             var pub_ips = _.union([inst.PublicIpAddress], _.compact(_.flatten(_.map(inst.NetworkInterfaces, function(iface) {
-              return _.union([iface.PublicIpAddress], _.compact(_.map(iface.PublicIpAddresses, function(ip) {
-                return ip.PublicIpAddress;
-              })));
+              return _.compact(_.map(iface.PrivateIpAddresses, function(ip) {
+                return _.isObject(ip.Association) && ip.Association.PublicIp;
+              }));
             }))));
             var secgroups = _.map(inst.SecurityGroups, function(sgrp) {
               return new Linkable(sgrp.GroupId, sgrp.GroupName, 'security_group', [sgrp.GroupId])            
